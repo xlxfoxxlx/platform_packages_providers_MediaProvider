@@ -38,12 +38,10 @@ import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.android.internal.os.RegionalizationEnvironment;
 import com.android.internal.util.ArrayUtils;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
 public class MediaScannerService extends Service implements Runnable {
     private static final String TAG = "MediaScannerService";
@@ -52,7 +50,7 @@ public class MediaScannerService extends Service implements Runnable {
     private volatile ServiceHandler mServiceHandler;
     private PowerManager.WakeLock mWakeLock;
     private String[] mExternalStoragePaths;
-    
+
     private void openDatabase(String volumeName) {
         try {
             ContentValues values = new ContentValues();
@@ -236,24 +234,6 @@ public class MediaScannerService extends Service implements Runnable {
                                 Environment.getRootDirectory() + "/media",
                                 Environment.getOemDirectory() + "/media",
                         };
-
-                        if (RegionalizationEnvironment.isSupported()) {
-                            final List<File> regionalizationDirs = RegionalizationEnvironment
-                                    .getAllPackageDirectories();
-                            if (regionalizationDirs.size() > 0) {
-                                String[] mediaDirs =
-                                        new String[directories.length + regionalizationDirs.size()];
-                                for (int i = 0; i < directories.length; i++) {
-                                    mediaDirs[i] = directories[i];
-                                }
-                                int j = directories.length;
-                                for (File f : regionalizationDirs) {
-                                    mediaDirs[j] = f.getAbsolutePath() + "/system/media";
-                                    j++;
-                                }
-                                directories = mediaDirs;
-                            }
-                        }
                     }
                     else if (MediaProvider.EXTERNAL_VOLUME.equals(volume)) {
                         // scan external storage volumes
